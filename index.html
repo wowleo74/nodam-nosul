@@ -206,14 +206,15 @@ return {day,hour,min}
 
 }
 
-function recordSmoke(){
+function recordDrink(){
 
-let logs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
+let logs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
 logs.push(Date.now())
 
-localStorage.setItem("smokeLogs",JSON.stringify(logs))
+localStorage.setItem("drinkLogs",JSON.stringify(logs))
 
 updateLogs()
+updateStats()
 
 }
 
@@ -358,6 +359,7 @@ if ("serviceWorker" in navigator) {
 </body>
 
 </html>
+
 
 
 
