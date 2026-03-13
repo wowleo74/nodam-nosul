@@ -261,7 +261,6 @@ smokeArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
 })
 
 drinkLogs.slice(-5).reverse().forEach(t=>{
-let d=new Date(t)
 drinkArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
 })
 
@@ -359,6 +358,7 @@ if ("serviceWorker" in navigator) {
 </body>
 
 </html>
+
 
 
 
