@@ -218,16 +218,6 @@ updateStats()
 
 }
 
-function recordDrink(){
-
-let logs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
-logs.push(Date.now())
-
-localStorage.setItem("drinkLogs",JSON.stringify(logs))
-
-updateLogs()
-
-}
 
 function resetSmoke(){
 
@@ -358,6 +348,7 @@ if ("serviceWorker" in navigator) {
 </body>
 
 </html>
+
 
 
 
