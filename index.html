@@ -254,17 +254,28 @@ smokeArea.innerHTML=""
 drinkArea.innerHTML=""
 
 smokeLogs.slice(-5).reverse().forEach(t=>{
-let d=new Date(t)
-smokeArea.innerHTML+=`<div class="logItem">${d.toLocaleString()}</div>`
+smokeArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
 })
 
 drinkLogs.slice(-5).reverse().forEach(t=>{
 let d=new Date(t)
-drinkArea.innerHTML+=`<div class="logItem">${d.toLocaleString()}</div>`
+drinkArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
 })
 
 }
+function formatTime(t){
 
+let d=new Date(t)
+
+let month=d.getMonth()+1
+let day=d.getDate()
+
+let hour=d.getHours().toString().padStart(2,"0")
+let min=d.getMinutes().toString().padStart(2,"0")
+
+return `${month}/${day} ${hour}:${min}`
+
+}v
 function updateStats(){
 
 let smokeLogs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
@@ -345,6 +356,7 @@ if ("serviceWorker" in navigator) {
 </body>
 
 </html>
+
 
 
 
