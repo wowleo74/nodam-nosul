@@ -164,8 +164,9 @@ let day=Math.floor(hour/24)
 
 hour%=24
 min%=60
+sec%=60
 
-return {day,hour,min}
+return {day,hour,min,sec}
 
 }
 
@@ -284,9 +285,10 @@ let drinkTime=getTime(now-drinkStart)
 
 let h=String(smokeTime.hour).padStart(2,"0")
 let m=String(smokeTime.min).padStart(2,"0")
+let s=String(smokeTime.sec).padStart(2,"0")
 
 document.getElementById("smokeTime").innerText=
-smokeTime.day+"일 "+h+":"+m
+smokeTime.day+"일 "+h+":"+m+":"+s
 
 document.getElementById("drinkDay").innerText=
 drinkTime.day+"일"
