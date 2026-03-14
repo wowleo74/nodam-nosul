@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -33,66 +34,59 @@ max-width:360px;
 margin:auto;
 padding:12px;
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
+grid-template-columns:1fr;
+gap:14px;
 }
 
 .card{
 background:white;
-border-radius:16px;
-padding:12px;
-box-shadow:0 6px 18px rgba(0,0,0,0.1);
+border-radius:18px;
+padding:16px;
+box-shadow:0 8px 20px rgba(0,0,0,0.12);
 display:flex;
 flex-direction:column;
 }
 
 .title{
-font-size:16px;
-font-weight:700;
-margin-bottom:2px;
-}
-
-.status{
-font-size:11px;
-color:#666;
+font-size:32px;
+font-weight:900;
 margin-bottom:6px;
 }
 
-.time{
-margin:6px 0;
-}
-
-.day{
-font-size:28px;
-font-weight:800;
-}
-
-.hour{
-font-size:18px;
+.status{
+font-size:20px;
+color:#666;
+margin-bottom:18px;
 font-weight:600;
-color:#444;
+}
+
+.time{
+font-size:32px;
+font-weight:900;
+margin-bottom:10px;
 }
 
 .stat{
 font-size:18px;
 font-weight:600;
 color:#444;
-margin-bottom:10px;
+margin-bottom:12px;
 }
 
 .button{
-padding:9px;
-border-radius:10px;
+padding:12px;
+border-radius:12px;
 text-align:center;
-font-weight:600;
+font-weight:700;
 cursor:pointer;
 margin-top:6px;
-font-size:14px;
+font-size:15px;
 transition:0.12s;
 }
 
 .button:active{
-transform:scale(0.95);
+transform:scale(0.92);
+filter:brightness(0.85);
 }
 
 .smokeBtn{
@@ -108,24 +102,6 @@ color:white;
 .resetBtn{
 background:#e9edf2;
 color:#333;
-}
-
-.log{
-margin-top:12px;
-font-size:14px;
-font-weight:600;
-border-top:1px solid #eee;
-padding-top:8px;
-}
-
-.logItem{
-background:#f7f8fb;
-border-radius:8px;
-padding:8px;
-text-align:center;
-font-size:16px;
-margin-top:6px;
-font-weight:600;
 }
 
 </style>
@@ -144,10 +120,7 @@ font-weight:600;
 <div class="title">🚭 금연</div>
 <div class="status">금연중</div>
 
-<div class="time">
-<div class="day" id="smokeDay">0일</div>
-<div class="hour" id="smokeHour">0시간 0분</div>
-</div>
+<div class="time" id="smokeTime">0일 00:00</div>
 
 <div class="stat">
 오늘 🚬 : <b id="todaySmoke">0</b>개
@@ -155,11 +128,6 @@ font-weight:600;
 
 <div class="button smokeBtn" onclick="recordSmoke()">🚬 담배 피움</div>
 <div class="button resetBtn" onclick="resetSmoke()">🔄 다시 시작</div>
-
-<div class="log">
-최근 기록
-<div id="smokeLog"></div>
-</div>
 
 </div>
 
@@ -169,22 +137,15 @@ font-weight:600;
 <div class="title">🍺 금주</div>
 <div class="status">금주중</div>
 
-<div class="time">
-<div class="day" id="drinkDay">0일</div>
-<div class="hour" id="drinkHour">0시간 0분</div>
-</div>
+<div class="time" id="drinkDay">0일</div>
 
 <div class="stat">
 7일 🍺 : <b id="weekDrink">0</b>회
+<span id="lastDrink"></span>
 </div>
 
 <div class="button drinkBtn" onclick="recordDrink()">🍺 술 마심</div>
 <div class="button resetBtn" onclick="resetDrink()">🔄 다시 시작</div>
-
-<div class="log">
-최근 기록
-<div id="drinkLog"></div>
-</div>
 
 </div>
 
@@ -208,17 +169,20 @@ return {day,hour,min}
 
 function recordDrink(){
 
+if(navigator.vibrate) navigator.vibrate(40)
+
 let logs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
 logs.push(Date.now())
 
 localStorage.setItem("drinkLogs",JSON.stringify(logs))
 
-updateLogs()
 updateStats()
 
 }
 
 function recordSmoke(){
+
+if(navigator.vibrate) navigator.vibrate(40)
 
 let logs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
 
@@ -226,10 +190,10 @@ logs.push(Date.now())
 
 localStorage.setItem("smokeLogs",JSON.stringify(logs))
 
-updateLogs()
 updateStats()
 
 }
+
 function resetSmoke(){
 
 localStorage.setItem("smokeStart",Date.now())
@@ -246,39 +210,6 @@ update()
 
 }
 
-function updateLogs(){
-
-let smokeLogs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
-let drinkLogs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
-
-let smokeArea=document.getElementById("smokeLog")
-let drinkArea=document.getElementById("drinkLog")
-
-smokeArea.innerHTML=""
-drinkArea.innerHTML=""
-
-smokeLogs.slice(-5).reverse().forEach(t=>{
-smokeArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
-})
-
-drinkLogs.slice(-5).reverse().forEach(t=>{
-drinkArea.innerHTML+=`<div class="logItem">${formatTime(t)}</div>`
-})
-
-}
-function formatTime(t){
-
-let d=new Date(t)
-
-let month=d.getMonth()+1
-let day=d.getDate()
-
-let hour=d.getHours().toString().padStart(2,"0")
-let min=d.getMinutes().toString().padStart(2,"0")
-
-return `${month}/${day} ${hour}:${min}`
-
-}v
 function updateStats(){
 
 let smokeLogs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
@@ -292,10 +223,27 @@ let todayCount=0
 smokeLogs.forEach(t=>{
 if(t>today.getTime()){
 todayCount++
-}
+}font-size:14px;
 })
 
 document.getElementById("todaySmoke").innerText=todayCount
+
+let lastText=""
+
+if(drinkLogs.length>0){
+
+let last=drinkLogs[drinkLogs.length-1]
+
+let d=new Date(last)
+
+let m=d.getMonth()+1
+let day=d.getDate()
+
+lastText=" (마지막 "+m+"/"+day+")"
+
+}
+
+document.getElementById("lastDrink").innerText=lastText
 
 let week=7*24*60*60*1000
 let now=Date.now()
@@ -332,13 +280,15 @@ let now=Date.now()
 let smokeTime=getTime(now-smokeStart)
 let drinkTime=getTime(now-drinkStart)
 
-document.getElementById("smokeDay").innerText=smokeTime.day+"일"
-document.getElementById("smokeHour").innerText=smokeTime.hour+"시간 "+smokeTime.min+"분"
+let h=String(smokeTime.hour).padStart(2,"0")
+let m=String(smokeTime.min).padStart(2,"0")
 
-document.getElementById("drinkDay").innerText=drinkTime.day+"일"
-document.getElementById("drinkHour").innerText=drinkTime.hour+"시간 "+drinkTime.min+"분"
+document.getElementById("smokeTime").innerText=
+smokeTime.day+"일 "+h+":"+m
 
-updateLogs()
+document.getElementById("drinkDay").innerText=
+drinkTime.day+"일"
+
 updateStats()
 
 }
@@ -351,23 +301,11 @@ update()
 <script>
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
+navigator.serviceWorker.register("service-worker.js")
 }
 
 </script>
 
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
+```
