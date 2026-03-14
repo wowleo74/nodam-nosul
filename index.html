@@ -8,12 +8,10 @@
 <title>노담 노술</title>
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#3f6ed6">
 
 <style>
 
-html, body{
-height:100%;
+body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 background:#eef1f6;
@@ -26,12 +24,10 @@ text-align:center;
 padding:16px;
 font-size:20px;
 font-weight:1000;
-box-shadow:0 2px 8px rgba(0,0,0,0.2);
 }
 
 .container{
 max-width:360px;
-height:calc(100vh - 60px);
 margin:auto;
 padding:12px;
 display:grid;
@@ -42,24 +38,16 @@ gap:14px;
 .card{
 background:white;
 border-radius:18px;
-padding:14px;
+padding:16px;
 box-shadow:0 8px 20px rgba(0,0,0,0.12);
 display:flex;
 flex-direction:column;
-justify-content:center;
 }
 
 .title{
 font-size:32px;
 font-weight:900;
-margin-bottom:6px;
-}
-
-.status{
-font-size:20px;
-color:#666;
-margin-bottom:18px;
-font-weight:600;
+margin-bottom:10px;
 }
 
 .time{
@@ -83,12 +71,6 @@ font-weight:700;
 cursor:pointer;
 margin-top:6px;
 font-size:15px;
-transition:0.12s;
-}
-
-.button:active{
-transform:scale(0.92);
-filter:brightness(0.85);
 }
 
 .smokeBtn{
@@ -117,15 +99,16 @@ color:#333;
 
 <div class="container">
 
+<!-- 금연 -->
+
 <div class="card">
 
 <div class="title">🚭 금연</div>
-<div class="status">금연중</div>
 
-<div class="time" id="smokeTime">0일 00:00</div>
+<div class="time" id="smokeTime">0일 00:00:00</div>
 
 <div class="stat">
-오늘 🚬 : <b id="todaySmoke">0</b>개
+오늘 🚬  <b id="todaySmoke">0</b>개
 </div>
 
 <div class="button smokeBtn" onclick="recordSmoke()">🚬 담배 피움</div>
@@ -134,15 +117,16 @@ color:#333;
 </div>
 
 
+<!-- 금주 -->
+
 <div class="card">
 
 <div class="title">🍺 금주</div>
-<div class="status">금주중</div>
 
 <div class="time" id="drinkDay">0일</div>
 
 <div class="stat">
-7일 🍺 : <b id="weekDrink">0</b>회
+7일 🍺  <b id="weekDrink">0</b>회
 <span id="lastDrink"></span>
 </div>
 
@@ -170,30 +154,39 @@ return {day,hour,min,sec}
 
 }
 
-function recordDrink(){
-
-if(navigator.vibrate) navigator.vibrate(40)
-
-let logs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
-logs.push(Date.now())
-
-localStorage.setItem("drinkLogs",JSON.stringify(logs))
-
-updateStats()
-
-}
-
 function recordSmoke(){
 
 if(navigator.vibrate) navigator.vibrate(40)
 
+let now=Date.now()
+
 let logs=JSON.parse(localStorage.getItem("smokeLogs"))||[]
 
-logs.push(Date.now())
+logs.push(now)
 
 localStorage.setItem("smokeLogs",JSON.stringify(logs))
 
-updateStats()
+localStorage.setItem("smokeStart",now)
+
+update()
+
+}
+
+function recordDrink(){
+
+if(navigator.vibrate) navigator.vibrate(40)
+
+let now=Date.now()
+
+let logs=JSON.parse(localStorage.getItem("drinkLogs"))||[]
+
+logs.push(now)
+
+localStorage.setItem("drinkLogs",JSON.stringify(logs))
+
+localStorage.setItem("drinkStart",now)
+
+update()
 
 }
 
@@ -302,14 +295,5 @@ update()
 
 </script>
 
-<script>
-
-if ("serviceWorker" in navigator) {
-navigator.serviceWorker.register("service-worker.js")
-}
-
-</script>
-
 </body>
 </html>
-```
