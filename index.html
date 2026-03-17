@@ -8,23 +8,21 @@
     <style>
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, sans-serif;
             background: #f0f2f5;
             color: #1a1a1b;
-            /* 화면 높이를 가득 채우고 스크롤 방지 */
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-sizing: border-box;
         }
 
         .header {
             background: linear-gradient(135deg, #3f6ed6, #2a4fa3);
             color: white;
             text-align: center;
-            padding: 12px;
-            font-size: 18px;
+            padding: 15px;
+            font-size: 20px;
             font-weight: 800;
             flex-shrink: 0;
         }
@@ -32,10 +30,10 @@
         .container {
             max-width: 400px;
             margin: auto;
-            padding: 10px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             flex-grow: 1;
             justify-content: center;
             width: 100%;
@@ -44,83 +42,88 @@
 
         .card {
             background: white;
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 28px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            /* 카드가 화면 높이에 맞춰 유연하게 조절됨 */
             flex: 1;
             min-height: 0;
-            max-height: 280px;
+            max-height: 340px;
+            text-align: center;
         }
 
         .card::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 6px; height: 100%;
+            top: 0; left: 0; width: 8px; height: 100%;
         }
         .smoke-card::before { background: #ff6b6b; }
         .drink-card::before { background: #6c5ce7; }
 
-        .title-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 5px;
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #555;
+            margin-bottom: 10px;
         }
-
-        .title { font-size: 18px; font-weight: 700; color: #555; }
 
         .time-display {
-            /* 화면 크기에 따라 폰트 크기 자동 조절 */
-            font-size: clamp(24px, 8vw, 32px);
+            font-size: clamp(30px, 9vw, 40px);
             font-weight: 900;
-            letter-spacing: -1px;
-            margin-bottom: 2px;
             color: #222;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
         }
 
-        .sub-stat {
-            font-size: 14px;
+        /* '오늘 0개'를 크게 강조한 스타일 */
+        .highlight-stat {
+            font-size: 34px;
+            font-weight: 900;
+            margin: 15px 0;
+        }
+        .smoke-text { color: #ff6b6b; }
+        .drink-text { color: #6c5ce7; }
+
+        .sub-info {
+            font-size: 16px;
             color: #888;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
             margin-top: auto;
         }
 
         .button {
-            padding: 12px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 18px;
             text-align: center;
-            font-weight: 700;
-            font-size: 14px;
+            font-weight: 800;
+            font-size: 17px;
             cursor: pointer;
-            transition: all 0.2s;
             border: none;
-            outline: none;
+            transition: transform 0.1s;
         }
 
-        .main-btn { color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .button:active { transform: scale(0.96); }
+
+        .main-btn { color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .smoke-btn { background: #ff6b6b; }
         .drink-btn { background: #6c5ce7; }
 
         .reset-btn {
             background: transparent;
-            color: #aaa;
-            font-size: 12px;
+            color: #ccc;
+            font-size: 13px;
             text-decoration: underline;
             padding: 5px;
         }
-
-        .button:active { transform: scale(0.97); opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -129,29 +132,33 @@
 
 <div class="container">
     <div class="card smoke-card">
-        <div class="title-row">
-            <span>🚭</span>
-            <span class="title">금연</span>
-        </div>
+        <div class="title">🚭 금연 시간</div>
         <div class="time-display" id="smokeTime">0일 00:00:00</div>
-        <div class="sub-stat">오늘 피운 담배 <b id="todaySmoke" style="color:#ff6b6b">0</b>개</div>
+        
+        <div class="highlight-stat smoke-text">
+            오늘 🚬 <span id="todaySmoke">0</span>개
+        </div>
+        
+        <div class="sub-info">최근 7일간 총 <span id="weekSmoke">0</span>개</div>
         
         <div class="btn-group">
-            <button class="button main-btn smoke-btn" onclick="recordSmoke()">🚬 담배 피움</button>
+            <button class="button main-btn smoke-btn" onclick="recordSmoke()">🚬 방금 피웠음</button>
             <button class="button reset-btn" onclick="resetSmoke()">🔄 기록 초기화</button>
         </div>
     </div>
 
     <div class="card drink-card">
-        <div class="title-row">
-            <span>🍺</span>
-            <span class="title">금주</span>
+        <div class="title">🍺 금주 기간</div>
+        <div class="time-display" id="drinkDay">0일째</div>
+        
+        <div class="highlight-stat drink-text">
+            최근 7일 🍺 <span id="weekDrink">0</span>회
         </div>
-        <div class="time-display" id="drinkDay">0일</div>
-        <div class="sub-stat">7일 🍺 <b id="weekDrink" style="color:#6c5ce7">0</b>회 <span id="lastDrink"></span></div>
+        
+        <div class="sub-info" id="lastDrinkInfo">기록 없음</div>
         
         <div class="btn-group">
-            <button class="button main-btn drink-btn" onclick="recordDrink()">🍺 술 마심</button>
+            <button class="button main-btn drink-btn" onclick="recordDrink()">🍺 방금 마셨음</button>
             <button class="button reset-btn" onclick="resetDrink()">🔄 기록 초기화</button>
         </div>
     </div>
@@ -163,8 +170,7 @@
         let min = Math.floor(sec / 60);
         let hour = Math.floor(min / 60);
         let day = Math.floor(hour / 24);
-        hour %= 24; min %= 60; sec %= 60;
-        return { day, hour, min, sec };
+        return { day, hour: hour % 24, min: min % 60, sec: sec % 60 };
     }
 
     function recordSmoke() {
@@ -188,61 +194,59 @@
     }
 
     function resetSmoke() {
-        if(!confirm("금연 기록을 초기화할까요?")) return;
-        localStorage.setItem("smokeStart", Date.now());
-        localStorage.removeItem("smokeLogs");
-        update();
+        if(confirm("금연 기록을 초기화할까요?")) {
+            localStorage.setItem("smokeStart", Date.now());
+            localStorage.removeItem("smokeLogs");
+            update();
+        }
     }
 
     function resetDrink() {
-        if(!confirm("금주 기록을 초기화할까요?")) return;
-        localStorage.setItem("drinkStart", Date.now());
-        localStorage.removeItem("drinkLogs");
-        update();
+        if(confirm("금주 기록을 초기화할까요?")) {
+            localStorage.setItem("drinkStart", Date.now());
+            localStorage.removeItem("drinkLogs");
+            update();
+        }
+    }
+
+    function update() {
+        let smokeStart = parseInt(localStorage.getItem("smokeStart") || Date.now());
+        let drinkStart = parseInt(localStorage.getItem("drinkStart") || Date.now());
+        if(!localStorage.getItem("smokeStart")) localStorage.setItem("smokeStart", smokeStart);
+        if(!localStorage.getItem("drinkStart")) localStorage.setItem("drinkStart", drinkStart);
+
+        let now = Date.now();
+        
+        // 금연 시간 업데이트
+        let s = getTime(now - smokeStart);
+        document.getElementById("smokeTime").innerText = 
+            `${s.day}일 ${String(s.hour).padStart(2, '0')}:${String(s.min).padStart(2, '0')}:${String(s.sec).padStart(2, '0')}`;
+        
+        // 금주 날짜 업데이트 (24시간 경과 기준)
+        let dDay = Math.floor((now - drinkStart) / (24 * 60 * 60 * 1000));
+        document.getElementById("drinkDay").innerText = `${dDay}일`;
+
+        updateStats();
     }
 
     function updateStats() {
         let smokeLogs = JSON.parse(localStorage.getItem("smokeLogs")) || [];
         let drinkLogs = JSON.parse(localStorage.getItem("drinkLogs")) || [];
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
+        let todayStart = new Date().setHours(0, 0, 0, 0);
+        let weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
 
-        let todayCount = smokeLogs.filter(t => t > today.getTime()).length;
-        document.getElementById("todaySmoke").innerText = todayCount;
+        // 통계 갱신
+        document.getElementById("todaySmoke").innerText = smokeLogs.filter(t => t > todayStart).length;
+        document.getElementById("weekSmoke").innerText = smokeLogs.filter(t => t > weekAgo).length;
+        document.getElementById("weekDrink").innerText = drinkLogs.filter(t => t > weekAgo).length;
 
-        let lastText = "";
-        if (drinkLogs.length > 0) {
+        // 마지막 음주 날짜 표시
+        if(drinkLogs.length > 0) {
             let last = new Date(drinkLogs[drinkLogs.length - 1]);
-            lastText = `(${last.getMonth() + 1}/${last.getDate()})`;
+            document.getElementById("lastDrinkInfo").innerText = `마지막 기록: ${last.getMonth() + 1}/${last.getDate()}`;
+        } else {
+            document.getElementById("lastDrinkInfo").innerText = "기록 없음";
         }
-        document.getElementById("lastDrink").innerText = lastText;
-
-        let week = 7 * 24 * 60 * 60 * 1000;
-        let now = Date.now();
-        let weekCount = drinkLogs.filter(t => now - t < week).length;
-        document.getElementById("weekDrink").innerText = weekCount;
-    }
-
-    function update() {
-        let smokeStart = localStorage.getItem("smokeStart") || Date.now();
-        let drinkStart = localStorage.getItem("drinkStart") || Date.now();
-        
-        if(!localStorage.getItem("smokeStart")) localStorage.setItem("smokeStart", smokeStart);
-        if(!localStorage.getItem("drinkStart")) localStorage.setItem("drinkStart", drinkStart);
-
-        let now = Date.now();
-        let smokeDiff = now - parseInt(smokeStart);
-        let drinkDiff = now - parseInt(drinkStart);
-
-        let sTime = getTime(smokeDiff);
-        document.getElementById("smokeTime").innerText = 
-            `${sTime.day}일 ${String(sTime.hour).padStart(2, "0")}:${String(sTime.min).padStart(2, "0")}:${String(sTime.sec).padStart(2, "0")}`;
-
-        // 24시간이 지나야 1일이 되는 방식
-        let dDay = Math.floor(drinkDiff / (24 * 60 * 60 * 1000));
-        document.getElementById("drinkDay").innerText = `${dDay}일`;
-
-        updateStats();
     }
 
     setInterval(update, 1000);
