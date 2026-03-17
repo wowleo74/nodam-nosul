@@ -2,49 +2,61 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>노담 노술</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        /* 1. 디자인 개선을 위한 스타일 시트 교체 */
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f0f2f5;
             color: #1a1a1b;
+            /* 화면 높이를 가득 채우고 스크롤 방지 */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .header {
             background: linear-gradient(135deg, #3f6ed6, #2a4fa3);
             color: white;
             text-align: center;
-            padding: 20px;
-            font-size: 22px;
+            padding: 12px;
+            font-size: 18px;
             font-weight: 800;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
 
         .container {
             max-width: 400px;
             margin: auto;
-            padding: 20px 15px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
+            flex-grow: 1;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .card {
             background: white;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            /* 카드가 화면 높이에 맞춰 유연하게 조절됨 */
+            flex: 1;
+            min-height: 0;
+            max-height: 280px;
         }
 
-        /* 카드 옆면에 포인트 컬러 추가 */
         .card::before {
             content: "";
             position: absolute;
@@ -56,66 +68,56 @@
         .title-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 6px;
+            margin-bottom: 5px;
         }
 
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #555;
-        }
+        .title { font-size: 18px; font-weight: 700; color: #555; }
 
         .time-display {
-            font-size: 36px;
+            /* 화면 크기에 따라 폰트 크기 자동 조절 */
+            font-size: clamp(24px, 8vw, 32px);
             font-weight: 900;
             letter-spacing: -1px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             color: #222;
         }
 
         .sub-stat {
-            font-size: 15px;
+            font-size: 14px;
             color: #888;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            margin-bottom: 10px;
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
+            margin-top: auto;
         }
 
         .button {
-            padding: 16px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
             outline: none;
         }
 
-        .main-btn {
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
+        .main-btn { color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .smoke-btn { background: #ff6b6b; }
         .drink-btn { background: #6c5ce7; }
 
         .reset-btn {
             background: transparent;
             color: #aaa;
-            font-size: 14px;
+            font-size: 12px;
             text-decoration: underline;
-            padding: 8px;
-            margin-top: 5px;
+            padding: 5px;
         }
 
         .button:active { transform: scale(0.97); opacity: 0.9; }
@@ -146,7 +148,7 @@
             <span class="title">금주</span>
         </div>
         <div class="time-display" id="drinkDay">0일</div>
-        <div class="sub-stat">지난 7일간 술자리 <b id="weekDrink" style="color:#6c5ce7">0</b>회 <span id="lastDrink"></span></div>
+        <div class="sub-stat">7일 🍺 <b id="weekDrink" style="color:#6c5ce7">0</b>회 <span id="lastDrink"></span></div>
         
         <div class="btn-group">
             <button class="button main-btn drink-btn" onclick="recordDrink()">🍺 술 마심</button>
@@ -156,7 +158,6 @@
 </div>
 
 <script>
-    /* 기존 로직 유지 및 보완 */
     function getTime(ms) {
         let sec = Math.floor(ms / 1000);
         let min = Math.floor(sec / 60);
@@ -237,7 +238,7 @@
         document.getElementById("smokeTime").innerText = 
             `${sTime.day}일 ${String(sTime.hour).padStart(2, "0")}:${String(sTime.min).padStart(2, "0")}:${String(sTime.sec).padStart(2, "0")}`;
 
-        // 24시간 경과 기준 '0일' 표시 로직 적용
+        // 24시간이 지나야 1일이 되는 방식
         let dDay = Math.floor(drinkDiff / (24 * 60 * 60 * 1000));
         document.getElementById("drinkDay").innerText = `${dDay}일`;
 
